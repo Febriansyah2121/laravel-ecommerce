@@ -22,26 +22,49 @@ class PageController extends Controller
      * Menampilkan halaman tentang (About)
      */
     public function about()
-{
-    $companyInfo = [
-        'name' => 'LaravelShop',
-        'founded' => 2024,
-        'vision' => 'Menjadi platform e-commerce terpercaya di Indonesia',
-        'mission' => [
-            'Menyediakan produk berkualitas',
-            'Pelayanan customer terbaik',
-            'Pengiriman cepat dan aman'
-        ],
-        'team' => [
-            ['name' => 'Ahmad Fauzi', 'position' => 'CEO & Founder'],
-            ['name' => 'Siti Aminah', 'position' => 'Head of Operations'],
-            ['name' => 'Budi Santoso', 'position' => 'Lead Developer'],
-            ['name' => 'Dewi Lestari', 'position' => 'Customer Service'],
-        ]
-    ];
-    
-    return view('pages.about', compact('companyInfo'));
-}
+    {
+        $companyInfo = [
+            'name' => 'LaravelShop',
+            'founded' => 2024,
+            'vision' => 'Menjadi platform e-commerce terpercaya di Indonesia',
+            'mission' => [
+                'Menyediakan produk berkualitas',
+                'Pelayanan customer terbaik',
+                'Pengiriman cepat dan aman'
+            ],
+            'team' => [
+                ['name' => 'Ahmad Fauzi', 'position' => 'CEO & Founder'],
+                ['name' => 'Siti Aminah', 'position' => 'Head of Operations'],
+                ['name' => 'Budi Santoso', 'position' => 'Lead Developer'],
+                ['name' => 'Dewi Lestari', 'position' => 'Customer Service'],
+            ]
+        ];
+        
+        return view('pages.about', compact('companyInfo'));
+    }
+
+    /**
+     * Menampilkan halaman kontak (Contact)
+     */
+    public function contact()
+    {
+        $contactInfo = [
+            'address' => 'Jl. Raya No. 123, Jakarta Selatan',
+            'phone' => '+62 812 3456 7890',
+            'email' => 'info@laravelshop.com',
+            'whatsapp' => '+62 812 3456 7890',
+            'instagram' => '@laravelshop',
+            'facebook' => 'laravelshop',
+            'twitter' => '@laravelshop',
+            'business_hours' => [
+                'Senin - Jumat' => '09:00 - 18:00',
+                'Sabtu' => '09:00 - 15:00',
+                'Minggu' => 'Tutup'
+            ]
+        ];
+        
+        return view('pages.contact', compact('contactInfo'));
+    }
 
     /**
      * Menampilkan halaman FAQ (Frequently Asked Questions)

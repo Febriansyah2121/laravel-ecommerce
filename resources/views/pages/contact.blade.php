@@ -45,6 +45,16 @@
                         <p class="mb-0 text-muted">{{ $contactInfo['whatsapp'] }}</p>
                     </div>
                 </div>
+
+                <div class="contact-item mb-4">
+                    <i class="far fa-clock text-primary fs-4"></i>
+                    <div>
+                        <strong>Jam Operasional</strong>
+                        @foreach($contactInfo['business_hours'] as $day => $hour)
+                            <p class="mb-0 text-muted">{{ $day }}: {{ $hour }}</p>
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -95,6 +105,11 @@
 .form-control {
     padding: 12px;
     border-radius: 12px;
+    border: 1px solid #ddd;
+}
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
 }
 </style>
 @endsection
