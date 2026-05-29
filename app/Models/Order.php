@@ -10,16 +10,27 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'order_number', 'customer_name', 'customer_email', 'customer_phone',
-        'shipping_address', 'total_amount', 'status', 'payment_method', 'items'
+        'user_id', 'product_id', 'quantity', 'total', 'status', 'order_number'
     ];
 
     protected $casts = [
-        'items' => 'array',
-        'total_amount' => 'decimal:2',
+        'total' => 'decimal:2',
     ];
 
-    public static function generateOrderNumber()
+    // Relasi ke user
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Relasi ke produk
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    // Generate order number
+    public static function generateOrderNumber(): string
     {
         $prefix = 'ORD-';
         $date = date('Ymd');
@@ -28,7 +39,8 @@ class Order extends Model
         return $prefix . $date . '-' . $number;
     }
 
-    public function getStatusLabelAttribute()
+    // Format status
+    public function getStatusLabelAttribute(): string
     {
         $statuses = [
             'pending' => 'Menunggu',
