@@ -9,27 +9,29 @@ class Order extends Model
 {
     use HasFactory;
 
+    protected $table = 'orders';
+    protected $primaryKey = 'id';
+    
     protected $fillable = [
-        'user_id', 'product_id', 'quantity', 'total', 'status', 'order_number'
+        'order_number',
+        'customer_name',
+        'customer_email',
+        'customer_phone',
+        'shipping_address',
+        'total_amount',
+        'status',
+        'payment_method',
+        'items'
     ];
 
     protected $casts = [
-        'total' => 'decimal:2',
+        'items' => 'array',
+        'total_amount' => 'decimal:2',
     ];
 
-    // Relasi ke user
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    // Relasi ke produk
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
-
-    // Generate order number
+    /**
+     * Generate unique order number.
+     */
     public static function generateOrderNumber(): string
     {
         $prefix = 'ORD-';
@@ -39,7 +41,9 @@ class Order extends Model
         return $prefix . $date . '-' . $number;
     }
 
-    // Format status
+    /**
+     * Get status label.
+     */
     public function getStatusLabelAttribute(): string
     {
         $statuses = [

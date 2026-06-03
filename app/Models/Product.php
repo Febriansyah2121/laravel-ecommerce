@@ -24,7 +24,16 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    // Scope untuk filter kategori (tambah tipe data)
+    // Accessor untuk URL gambar (otomatis)
+    public function getImageUrlAttribute(): string
+    {
+        if ($this->image) {
+            return asset('storage/' . $this->image);
+        }
+        return asset('images/placeholder.png'); // placeholder jika tidak ada gambar
+    }
+
+    // Scope untuk filter kategori
     public function scopeByCategory(Builder $query, ?string $categorySlug): Builder
     {
         if ($categorySlug && $categorySlug != 'all') {
@@ -35,7 +44,7 @@ class Product extends Model
         return $query;
     }
 
-    // Scope untuk pencarian (tambah tipe data)
+    // Scope untuk pencarian
     public function scopeSearch(Builder $query, ?string $search): Builder
     {
         if ($search) {

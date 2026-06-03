@@ -4,146 +4,93 @@
 @section('page-title', '✏️ Edit Produk')
 
 @section('content')
-<div class="card">
-    <div class="card-body">
-        <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-soft overflow-hidden">
+        <div class="p-6 border-b border-slate-100">
+            <h2 class="text-xl font-semibold">Form Edit Produk</h2>
+            <p class="text-slate-500 text-sm mt-1">Ubah data produk yang sudah ada</p>
+        </div>
+        
+        <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data" class="p-6">
             @csrf
             @method('PUT')
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Nama Produk <span class="text-danger">*</span></label>
-                    <input type="text" name="name" class="form-control" value="{{ $product->name }}" required>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Nama Produk <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange" value="{{ $product->name }}" required>
                 </div>
                 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Kategori <span class="text-danger">*</span></label>
-                    <select name="category" class="form-select" required>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Kategori <span class="text-red-500">*</span></label>
+                    <select name="category_id" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange" required>
                         <option value="">-- Pilih Kategori --</option>
-                        <option value="elektronik" {{ $product->category == 'elektronik' ? 'selected' : '' }}>📱 Elektronik</option>
-                        <option value="fashion" {{ $product->category == 'fashion' ? 'selected' : '' }}>👔 Fashion</option>
-                        <option value="olahraga" {{ $product->category == 'olahraga' ? 'selected' : '' }}>⚽ Olahraga</option>
-                        <option value="rumah" {{ $product->category == 'rumah' ? 'selected' : '' }}>🏠 Rumah Tangga</option>
-                        <option value="buku" {{ $product->category == 'buku' ? 'selected' : '' }}>📚 Buku</option>
-                        <option value="travel" {{ $product->category == 'travel' ? 'selected' : '' }}>✈️ Travel</option>
-                        <option value="aksesoris" {{ $product->category == 'aksesoris' ? 'selected' : '' }}>🎧 Aksesoris</option>
-                        <option value="kecantikan" {{ $product->category == 'kecantikan' ? 'selected' : '' }}>💄 Kecantikan</option>
-                        <option value="makanan" {{ $product->category == 'makanan' ? 'selected' : '' }}>🍕 Makanan & Minuman</option>
-                        <option value="otomotif" {{ $product->category == 'otomotif' ? 'selected' : '' }}>🚗 Otomotif</option>
+                        @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ $product->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
                     </select>
                 </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Harga <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text">Rp</span>
-                        <input type="number" name="price" class="form-control" value="{{ $product->price }}" required>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Harga <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">Rp</span>
+                        <input type="number" name="price" class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange" value="{{ $product->price }}" required>
                     </div>
                 </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Stok <span class="text-danger">*</span></label>
-                    <input type="number" name="stock" class="form-control" value="{{ $product->stock }}" required>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Stok <span class="text-red-500">*</span></label>
+                    <input type="number" name="stock" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange" value="{{ $product->stock }}" required>
                 </div>
-
-                <div class="col-12 mb-3">
-                    <label class="form-label">Deskripsi</label>
-                    <textarea name="description" rows="4" class="form-control">{{ $product->description }}</textarea>
+                
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Deskripsi</label>
+                    <textarea name="description" rows="4" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange">{{ $product->description }}</textarea>
                 </div>
-
-                <div class="col-12 mb-3">
-                    <label class="form-label">Gambar Saat Ini</label>
-                    @if($product->image)
-                        <div class="mb-2">
-                            <img src="{{ asset('storage/' . $product->image) }}" width="100" class="rounded">
+                
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Gambar Saat Ini</label>
+                    @if($product->image && file_exists(storage_path('app/public/' . $product->image)))
+                        <div class="mb-3">
+                            <img src="{{ asset('storage/' . $product->image) }}" class="w-32 h-32 object-cover rounded-lg border">
                         </div>
                     @else
-                        <p class="text-muted">Tidak ada gambar</p>
+                        <p class="text-slate-500 mb-3">Tidak ada gambar</p>
                     @endif
                     
-                    <label class="form-label mt-2">Ganti Gambar (opsional)</label>
-                    <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
-                        <div class="image-upload-icon">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                        </div>
-                        <p class="mb-1">Klik untuk upload gambar baru</p>
-                        <small class="text-muted">Format: JPG, PNG. Max 2MB</small>
-                        <input type="file" name="image" id="imageInput" class="d-none" accept="image/*" onchange="previewImage(this)">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Ganti Gambar (opsional)</label>
+                    <div class="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-brand-orange transition">
+                        <i class="fas fa-cloud-upload-alt text-3xl text-slate-400 mb-2"></i>
+                        <p class="text-slate-500">Klik untuk upload gambar baru</p>
+                        <p class="text-xs text-slate-400 mt-1">Format: JPG, PNG, WEBP (Max 2MB)</p>
+                        <input type="file" name="image" id="imageInput" class="hidden" accept="image/*" onchange="previewImage(this)">
+                        <button type="button" onclick="document.getElementById('imageInput').click()" class="mt-3 px-4 py-2 rounded-lg bg-slate-100 text-sm hover:bg-slate-200 transition">Pilih Gambar</button>
                     </div>
-                    <div id="imagePreview" class="image-preview mt-3" style="display: none;">
-                        <img id="previewImg" src="#" alt="Preview" style="max-width: 150px; border-radius: 10px;">
-                        <button type="button" class="btn-remove-img" onclick="removeImage()">&times;</button>
+                    <div id="imagePreview" class="mt-3 hidden">
+                        <p class="text-sm text-green-600"><i class="fas fa-check-circle"></i> Gambar baru dipilih: <span id="fileName"></span></p>
                     </div>
                 </div>
             </div>
-
-            <div class="d-flex justify-content-between mt-3">
-                <a href="{{ route('admin.products.index') }}" class="btn btn-secondary px-4">
-                    <i class="fas fa-arrow-left me-2"></i> Batal
-                </a>
-                <button type="submit" class="btn btn-primary px-4">
-                    <i class="fas fa-save me-2"></i> Update Produk
-                </button>
+            
+            <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-100">
+                <a href="{{ route('admin.products.index') }}" class="px-6 py-2 rounded-full bg-slate-200 text-slate-700 font-semibold hover:bg-slate-300 transition">Batal</a>
+                <button type="submit" class="px-6 py-2 rounded-full bg-brand-orange text-white font-semibold hover:bg-brand-orangeDark transition">Update Produk</button>
             </div>
         </form>
     </div>
 </div>
 
-<style>
-.image-upload-area {
-    border: 2px dashed #ddd;
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: #f8f9fa;
-}
-.image-upload-area:hover {
-    border-color: #667eea;
-    background: #f0f2f5;
-}
-.image-upload-icon i {
-    font-size: 40px;
-    color: #667eea;
-    margin-bottom: 10px;
-}
-.image-preview {
-    position: relative;
-    display: inline-block;
-}
-.btn-remove-img {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: #dc3545;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-</style>
-
 <script>
 function previewImage(input) {
     const preview = document.getElementById('imagePreview');
-    const previewImg = document.getElementById('previewImg');
-    
+    const fileName = document.getElementById('fileName');
     if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            previewImg.src = e.target.result;
-            preview.style.display = 'inline-block';
-        }
-        reader.readAsDataURL(input.files[0]);
+        fileName.innerText = input.files[0].name;
+        preview.classList.remove('hidden');
+    } else {
+        preview.classList.add('hidden');
     }
-}
-
-function removeImage() {
-    document.getElementById('imageInput').value = '';
-    document.getElementById('imagePreview').style.display = 'none';
-    document.getElementById('previewImg').src = '#';
 }
 </script>
 @endsection

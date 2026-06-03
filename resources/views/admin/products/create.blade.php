@@ -4,147 +4,89 @@
 @section('page-title', '➕ Tambah Produk Baru')
 
 @section('content')
-<div class="card">
-    <div class="card-body">
-        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-soft overflow-hidden">
+        <div class="p-6 border-b border-slate-100">
+            <h2 class="text-xl font-semibold">Form Tambah Produk</h2>
+            <p class="text-slate-500 text-sm mt-1">Isi data produk dengan lengkap</p>
+        </div>
+        
+        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="p-6">
             @csrf
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Nama Produk <span class="text-danger">*</span></label>
-                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" 
-                           placeholder="Contoh: Smartphone Galaxy A54" required>
-                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Nama Produk <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent @error('name') border-red-500 @enderror" value="{{ old('name') }}" required>
+                    @error('name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Kategori <span class="text-danger">*</span></label>
-                    <select name="category" class="form-select @error('category') is-invalid @enderror" required>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Kategori <span class="text-red-500">*</span></label>
+                    <select name="category_id" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange" required>
                         <option value="">-- Pilih Kategori --</option>
-                        <option value="elektronik">📱 Elektronik</option>
-                        <option value="fashion">👔 Fashion</option>
-                        <option value="olahraga">⚽ Olahraga</option>
-                        <option value="rumah">🏠 Rumah Tangga</option>
-                        <option value="buku">📚 Buku</option>
-                        <option value="travel">✈️ Travel</option>
-                        <option value="aksesoris">🎧 Aksesoris</option>
-                        <option value="kecantikan">💄 Kecantikan</option>
-                        <option value="makanan">🍕 Makanan & Minuman</option>
-                        <option value="otomotif">🚗 Otomotif</option>
+                        @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
                     </select>
-                    @error('category')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    @error('category_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Harga <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text">Rp</span>
-                        <input type="number" name="price" class="form-control @error('price') is-invalid @enderror" 
-                               placeholder="0" min="0" required>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Harga <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">Rp</span>
+                        <input type="number" name="price" class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange @error('price') border-red-500 @enderror" value="{{ old('price') }}" required>
                     </div>
-                    @error('price')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    @error('price')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Stok <span class="text-danger">*</span></label>
-                    <input type="number" name="stock" class="form-control @error('stock') is-invalid @enderror" 
-                           placeholder="0" min="0" required>
-                    @error('stock')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Stok <span class="text-red-500">*</span></label>
+                    <input type="number" name="stock" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange @error('stock') border-red-500 @enderror" value="{{ old('stock', 0) }}" required>
+                    @error('stock')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
-
-                <div class="col-12 mb-3">
-                    <label class="form-label">Deskripsi</label>
-                    <textarea name="description" rows="4" class="form-control @error('description') is-invalid @enderror" 
-                              placeholder="Deskripsikan produk secara lengkap..."></textarea>
-                    @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Deskripsi</label>
+                    <textarea name="description" rows="4" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange">{{ old('description') }}</textarea>
+                    @error('description')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
-
-                <div class="col-12 mb-3">
-                    <label class="form-label">Gambar Produk</label>
-                    <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
-                        <div class="image-upload-icon">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                        </div>
-                        <p class="mb-1">Klik untuk upload gambar</p>
-                        <small class="text-muted">Format: JPG, PNG. Max 2MB</small>
-                        <input type="file" name="image" id="imageInput" class="d-none" accept="image/*" onchange="previewImage(this)">
+                
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Gambar Produk</label>
+                    <div class="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-brand-orange transition">
+                        <i class="fas fa-cloud-upload-alt text-3xl text-slate-400 mb-2"></i>
+                        <p class="text-slate-500">Klik atau drag & drop gambar</p>
+                        <p class="text-xs text-slate-400 mt-1">Format: JPG, PNG, WEBP (Max 2MB)</p>
+                        <input type="file" name="image" id="imageInput" class="hidden" accept="image/*" onchange="previewImage(this)">
+                        <button type="button" onclick="document.getElementById('imageInput').click()" class="mt-3 px-4 py-2 rounded-lg bg-slate-100 text-sm hover:bg-slate-200 transition">Pilih Gambar</button>
                     </div>
-                    <div id="imagePreview" class="image-preview mt-3" style="display: none;">
-                        <img id="previewImg" src="#" alt="Preview" style="max-width: 150px; border-radius: 10px;">
-                        <button type="button" class="btn-remove-img" onclick="removeImage()">&times;</button>
+                    <div id="imagePreview" class="mt-3 hidden">
+                        <p class="text-sm text-green-600"><i class="fas fa-check-circle"></i> Gambar dipilih: <span id="fileName"></span></p>
                     </div>
-                    @error('image')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    @error('image')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
             </div>
-
-            <div class="d-flex justify-content-between mt-3">
-                <a href="{{ route('admin.products.index') }}" class="btn btn-secondary px-4">
-                    <i class="fas fa-arrow-left me-2"></i> Batal
-                </a>
-                <button type="submit" class="btn btn-primary px-4">
-                    <i class="fas fa-save me-2"></i> Simpan Produk
-                </button>
+            
+            <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-100">
+                <a href="{{ route('admin.products.index') }}" class="px-6 py-2 rounded-full bg-slate-200 text-slate-700 font-semibold hover:bg-slate-300 transition">Batal</a>
+                <button type="submit" class="px-6 py-2 rounded-full bg-brand-orange text-white font-semibold hover:bg-brand-orangeDark transition">Simpan Produk</button>
             </div>
         </form>
     </div>
 </div>
 
-<style>
-/* Image Upload Area */
-.image-upload-area {
-    border: 2px dashed #ddd;
-    border-radius: 12px;
-    padding: 30px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: #f8f9fa;
-}
-.image-upload-area:hover {
-    border-color: #667eea;
-    background: #f0f2f5;
-}
-.image-upload-icon i {
-    font-size: 48px;
-    color: #667eea;
-    margin-bottom: 10px;
-}
-.image-preview {
-    position: relative;
-    display: inline-block;
-}
-.btn-remove-img {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: #dc3545;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-</style>
-
 <script>
 function previewImage(input) {
     const preview = document.getElementById('imagePreview');
-    const previewImg = document.getElementById('previewImg');
-    
+    const fileName = document.getElementById('fileName');
     if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            previewImg.src = e.target.result;
-            preview.style.display = 'inline-block';
-        }
-        reader.readAsDataURL(input.files[0]);
+        fileName.innerText = input.files[0].name;
+        preview.classList.remove('hidden');
+    } else {
+        preview.classList.add('hidden');
     }
-}
-
-function removeImage() {
-    document.getElementById('imageInput').value = '';
-    document.getElementById('imagePreview').style.display = 'none';
-    document.getElementById('previewImg').src = '#';
 }
 </script>
 @endsection
