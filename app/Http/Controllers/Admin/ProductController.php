@@ -24,29 +24,80 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        // ... kode store
+        // Validasi
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'nullable|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
+        ]);
+
+        // Upload gambar
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+            $validated['image'] = $imagePath;
+        }
+
+        // Simpan produk
+        Product::create($validated);
+
+        return redirect()->route('admin.products.index')
+            ->with('success', 'Produk berhasil ditambahkan!');
     }
 
-    public function show(int $id)  // ← tambah tipe int
-    {
-        $product = Product::with('category')->findOrFail($id);
-        return view('admin.products.show', compact('product'));
-    }
-
-    public function edit(int $id)  // ← tambah tipe int
+    public function edit($id)
     {
         $product = Product::findOrFail($id);
         $categories = Category::all();
         return view('admin.products.edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, int $id)  // ← tambah tipe int
+    public function update(Request $request, $id)
     {
-        // ... kode update
+        $product = Product::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'nullable|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
+        ]);
+
+        if ($request->hasFile('image')) {
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
+            $imagePath = $request->file('image')->store('products', 'public');
+            $validated['image'] = $imagePath;
+        }
+
+        $product->update($validated);
+
+        return redirect()->route('admin.products.index')
+            ->with('success', 'Produk berhasil diupdate!');
     }
 
-    public function destroy(int $id)  // ← tambah tipe int
+    public function destroy($id)
     {
-        // ... kode destroy
+        $product = Product::findOrFail($id);
+        
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
+        
+        $product->delete();
+
+        return redirect()->route('admin.products.index')
+            ->with('success', 'Produk berhasil dihapus!');
+    }
+
+    public function show($id)
+    {
+        $product = Product::with('category')->findOrFail($id);
+        return view('admin.products.show', compact('product'));
     }
 }

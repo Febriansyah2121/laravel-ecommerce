@@ -38,6 +38,10 @@
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition {{ request()->routeIs('admin.dashboard') ? 'bg-white/10 text-white' : '' }}">
                 <i class="fas fa-tachometer-alt w-5"></i> Dashboard
             </a>
+            <!-- MENU KATEGORI - TAMBAHKAN INI -->
+            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition {{ request()->routeIs('admin.categories.*') ? 'bg-white/10 text-white' : '' }}">
+                <i class="fas fa-folder w-5"></i> Kategori
+            </a>
             <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition {{ request()->routeIs('admin.products.*') ? 'bg-white/10 text-white' : '' }}">
                 <i class="fas fa-box w-5"></i> Produk
             </a>

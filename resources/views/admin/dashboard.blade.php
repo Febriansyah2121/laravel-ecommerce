@@ -39,7 +39,8 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm opacity-80">Revenue</p>
-                <p class="text-3xl font-bold">Rp {{ number_format(\App\Models\Order::sum('total'), 0, ',', '.') }}</p>
+                {{-- PERBAIKAN: ganti 'total' menjadi 'total_amount' --}}
+                <p class="text-3xl font-bold">Rp {{ number_format(\App\Models\Order::sum('total_amount'), 0, ',', '.') }}</p>
             </div>
             <i class="fas fa-dollar-sign text-4xl opacity-50"></i>
         </div>
@@ -67,7 +68,7 @@
                     <tr class="border-b">
                         <td class="py-3">{{ $order->order_number }}</td>
                         <td class="py-3">{{ $order->customer_name ?? 'N/A' }}</td>
-                        <td class="py-3">Rp {{ number_format($order->total, 0, ',', '.') }}</td>
+                        <td class="py-3">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
                         <td class="py-3">
                             <span class="px-2 py-1 rounded-full text-xs 
                                 @if($order->status == 'pending') bg-yellow-100 text-yellow-800
@@ -99,13 +100,13 @@
                     <p class="text-xs text-slate-500">Create a new product listing</p>
                 </div>
             </a>
-            <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
-                <div class="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 grid place-items-center">
-                    <i class="fas fa-box"></i>
+            <a href="{{ route('admin.categories.create') }}" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                <div class="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-500 grid place-items-center">
+                    <i class="fas fa-folder"></i>
                 </div>
                 <div>
-                    <p class="font-medium">Manage Products</p>
-                    <p class="text-xs text-slate-500">Edit, update, or delete products</p>
+                    <p class="font-medium">Add New Category</p>
+                    <p class="text-xs text-slate-500">Create a new product category</p>
                 </div>
             </a>
             <a href="{{ route('home') }}" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">

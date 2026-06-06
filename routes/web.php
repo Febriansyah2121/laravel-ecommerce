@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
@@ -45,41 +46,45 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/terms', [PageController::class, 'terms'])->name('terms');
     Route::get('/promo', [PageController::class, 'promo'])->name('promo');
     
-    // ROUTE PRODUK
+    // ROUTE PRODUK (PUBLIK)
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
     
-    // ============================================
-    // ROUTE CART - PASTIKAN INI ADA
-    // ============================================
+    // ROUTE CART
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
     Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
     
-    // CHECKOUT
+    // ROUTE CHECKOUT
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
     
-    // PROFILE
+    // ROUTE PROFILE
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    // ROUTE ADMIN
+    // ============================================
+    // ROUTE ADMIN (Khusus role admin)
+    // ============================================
     Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+        
+        // Dashboard
         Route::get('/dashboard', function () {
             return view('admin.dashboard');
         })->name('dashboard');
         
-        Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
-        Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
-        Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
-        Route::get('/products/{id}', [AdminProductController::class, 'show'])->name('products.show');
-        Route::get('/products/{id}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
-        Route::put('/products/{id}', [AdminProductController::class, 'update'])->name('products.update');
-        Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->name('products.destroy');
+        // ============================================
+        // ROUTE KATEGORI (CRUD) - TAMBAHKAN INI
+        // ============================================
+        Route::resource('categories', AdminCategoryController::class);
+        
+        // ============================================
+        // ROUTE PRODUK (CRUD)
+        // ============================================
+        Route::resource('products', AdminProductController::class);
     });
 });
