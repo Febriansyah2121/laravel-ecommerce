@@ -4,15 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of products.
-     */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
         $category = $request->input('category', 'all');
         $search = $request->input('search', '');
@@ -32,19 +27,19 @@ class ProductController extends Controller
             });
         }
         
-        /** @var LengthAwarePaginator $products */
         $products = $query->with('category')->orderBy('id', 'desc')->paginate(12);
         $categories = ['all', 'elektronik', 'fashion', 'olahraga', 'rumah', 'buku', 'travel'];
         
         return view('products.index', compact('products', 'category', 'search', 'categories'));
     }
 
-    /**
-     * Display the specified product.
-     */
-    public function show(int $id): View
+    public function show(int $id)
     {
         $product = Product::with('category')->findOrFail($id);
+        
+        // RECORD VIEW UNTUK TRACKING KLIK PRODUK
+        $product->recordView();
+        
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $id)
             ->limit(4)

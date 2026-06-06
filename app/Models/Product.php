@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 
 class Product extends Model
 {
@@ -24,17 +23,35 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    // Accessor untuk URL gambar (otomatis)
-    public function getImageUrlAttribute(): string
+    // Relasi ke views
+    public function views()
     {
-        if ($this->image) {
-            return asset('storage/' . $this->image);
-        }
-        return asset('images/placeholder.png'); // placeholder jika tidak ada gambar
+        return $this->hasMany(ProductView::class);
+    }
+
+    // Method untuk menambah view (tracking klik)
+    public function recordView()
+    {
+        $this->views()->create([
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent()
+        ]);
+    }
+
+    // Method untuk mendapatkan total views
+    public function getTotalViewsAttribute()
+    {
+        return $this->views()->count();
+    }
+
+    // Method untuk mendapatkan views hari ini
+    public function getTodayViewsAttribute()
+    {
+        return $this->views()->whereDate('created_at', today())->count();
     }
 
     // Scope untuk filter kategori
-    public function scopeByCategory(Builder $query, ?string $categorySlug): Builder
+    public function scopeByCategory($query, $categorySlug)
     {
         if ($categorySlug && $categorySlug != 'all') {
             return $query->whereHas('category', function($q) use ($categorySlug) {
@@ -45,7 +62,7 @@ class Product extends Model
     }
 
     // Scope untuk pencarian
-    public function scopeSearch(Builder $query, ?string $search): Builder
+    public function scopeSearch($query, $search)
     {
         if ($search) {
             return $query->where('name', 'LIKE', "%{$search}%")
@@ -55,13 +72,13 @@ class Product extends Model
     }
 
     // Format harga
-    public function getFormattedPriceAttribute(): string
+    public function getFormattedPriceAttribute()
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');
     }
 
     // Cek stok
-    public function isInStock(): bool
+    public function isInStock()
     {
         return $this->stock > 0;
     }
