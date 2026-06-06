@@ -10,19 +10,30 @@
             <h2 class="text-xl font-semibold">Form Tambah Kategori</h2>
             <p class="text-slate-500 text-sm mt-1">Isi data kategori dengan lengkap</p>
         </div>
-        
+
+        @if($errors->any())
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mx-6 mt-4 rounded-lg">
+                <ul class="text-red-700 text-sm">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        {{-- PERBAIKAN: action route yang benar --}}
         <form action="{{ route('admin.categories.store') }}" method="POST" class="p-6">
             @csrf
             
             <div class="mb-4">
                 <label class="block text-sm font-medium text-slate-700 mb-2">Nama Kategori <span class="text-red-500">*</span></label>
-                <input type="text" name="name" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange @error('name') border-red-500 @enderror" value="{{ old('name') }}" required>
+                <input type="text" name="name" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange" value="{{ old('name') }}" required>
                 @error('name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             
             <div class="mb-4">
                 <label class="block text-sm font-medium text-slate-700 mb-2">Slug <span class="text-red-500">*</span></label>
-                <input type="text" name="slug" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange @error('slug') border-red-500 @enderror" value="{{ old('slug') }}" required>
+                <input type="text" name="slug" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-orange" value="{{ old('slug') }}" required>
                 <p class="text-xs text-slate-400 mt-1">Contoh: elektronik, fashion, olahraga</p>
                 @error('slug')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>

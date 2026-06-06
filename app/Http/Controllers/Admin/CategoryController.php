@@ -24,6 +24,7 @@ class CategoryController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        // VALIDASI INPUT
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories',
             'slug' => 'required|string|max:255|unique:categories',
@@ -31,6 +32,7 @@ class CategoryController extends Controller
             'icon' => 'nullable|string|max:50'
         ]);
 
+        // SIMPAN KE DATABASE
         Category::create($validated);
 
         return redirect()->route('admin.categories.index')

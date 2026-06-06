@@ -26,6 +26,7 @@ class ProductController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        // VALIDASI INPUT
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -35,11 +36,13 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
         ]);
 
+        // UPLOAD GAMBAR
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
             $validated['image'] = $imagePath;
         }
 
+        // SIMPAN KE DATABASE
         Product::create($validated);
 
         return redirect()->route('admin.products.index')
