@@ -6,25 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $products = Product::with('category')->orderBy('id', 'desc')->paginate(10);
         return view('admin.products.index', compact('products'));
     }
 
-    public function create()
+    public function create(): View
     {
         $categories = Category::all();
         return view('admin.products.create', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        // Validasi
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -34,27 +35,25 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
         ]);
 
-        // Upload gambar
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
             $validated['image'] = $imagePath;
         }
 
-        // Simpan produk
         Product::create($validated);
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil ditambahkan!');
     }
 
-    public function edit($id)
+    public function edit(int $id): View
     {
         $product = Product::findOrFail($id);
         $categories = Category::all();
         return view('admin.products.edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         $product = Product::findOrFail($id);
 
@@ -81,7 +80,7 @@ class ProductController extends Controller
             ->with('success', 'Produk berhasil diupdate!');
     }
 
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         $product = Product::findOrFail($id);
         
@@ -95,7 +94,7 @@ class ProductController extends Controller
             ->with('success', 'Produk berhasil dihapus!');
     }
 
-    public function show($id)
+    public function show(int $id): View
     {
         $product = Product::with('category')->findOrFail($id);
         return view('admin.products.show', compact('product'));

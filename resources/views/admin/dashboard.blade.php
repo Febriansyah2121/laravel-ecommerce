@@ -39,7 +39,6 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm opacity-80">Revenue</p>
-                {{-- PERBAIKAN: ganti 'total' menjadi 'total_amount' --}}
                 <p class="text-3xl font-bold">Rp {{ number_format(\App\Models\Order::sum('total_amount'), 0, ',', '.') }}</p>
             </div>
             <i class="fas fa-dollar-sign text-4xl opacity-50"></i>
@@ -51,7 +50,7 @@
     <div class="bg-white rounded-2xl shadow-soft p-6">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold">Recent Orders</h3>
-            <a href="#" class="text-sm text-brand-orange">View All →</a>
+            <a href="{{ route('admin.orders.index') }}" class="text-sm text-brand-orange hover:underline">View All →</a>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -73,13 +72,15 @@
                             <span class="px-2 py-1 rounded-full text-xs 
                                 @if($order->status == 'pending') bg-yellow-100 text-yellow-800
                                 @elseif($order->status == 'processing') bg-blue-100 text-blue-800
-                                @else bg-green-100 text-green-800 @endif">
+                                @elseif($order->status == 'shipped') bg-purple-100 text-purple-800
+                                @elseif($order->status == 'delivered') bg-green-100 text-green-800
+                                @else bg-red-100 text-red-800 @endif">
                                 {{ ucfirst($order->status) }}
                             </span>
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="4" class="py-4 text-center text-slate-500">No orders yet</td></tr>
+                    <tr class="border-b"><td colspan="4" class="py-4 text-center text-slate-500">No orders yet</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -109,13 +110,13 @@
                     <p class="text-xs text-slate-500">Create a new product category</p>
                 </div>
             </a>
-            <a href="{{ route('home') }}" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+            <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
                 <div class="w-10 h-10 rounded-lg bg-green-500/10 text-green-500 grid place-items-center">
-                    <i class="fas fa-globe"></i>
+                    <i class="fas fa-truck"></i>
                 </div>
                 <div>
-                    <p class="font-medium">View Website</p>
-                    <p class="text-xs text-slate-500">Go to customer storefront</p>
+                    <p class="font-medium">Manage Orders</p>
+                    <p class="text-xs text-slate-500">View and update order status</p>
                 </div>
             </a>
         </div>

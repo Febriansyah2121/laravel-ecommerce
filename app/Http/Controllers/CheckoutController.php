@@ -71,15 +71,18 @@ class CheckoutController extends Controller
             }
         }
         
+        // Status berdasarkan metode pembayaran
+        $status = ($validated['payment_method'] != 'cod') ? 'processing' : 'pending';
+        
         $order = Order::create([
             'order_number' => Order::generateOrderNumber(),
             'customer_name' => $validated['customer_name'],
             'customer_email' => $validated['customer_email'],
             'customer_phone' => $validated['customer_phone'],
             'shipping_address' => $validated['shipping_address'],
-            'total_amount' => $total,  // ← PASTIKAN total_amount, BUKAN total
+            'total_amount' => $total,
             'payment_method' => $validated['payment_method'],
-            'status' => 'pending',
+            'status' => $status,
             'items' => json_encode($items)
         ]);
         

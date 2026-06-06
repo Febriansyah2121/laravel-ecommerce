@@ -37,13 +37,13 @@ class CategoryController extends Controller
             ->with('success', 'Kategori berhasil ditambahkan!');
     }
 
-    public function edit(int $id): View  // ← tambah tipe int
+    public function edit(int $id): View
     {
         $category = Category::findOrFail($id);
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function update(Request $request, int $id): RedirectResponse  // ← tambah tipe int
+    public function update(Request $request, int $id): RedirectResponse
     {
         $category = Category::findOrFail($id);
 
@@ -60,11 +60,10 @@ class CategoryController extends Controller
             ->with('success', 'Kategori berhasil diupdate!');
     }
 
-    public function destroy(int $id): RedirectResponse  // ← tambah tipe int
+    public function destroy(int $id): RedirectResponse
     {
         $category = Category::findOrFail($id);
         
-        // Update products to set category_id = null
         Product::where('category_id', $id)->update(['category_id' => null]);
         
         $category->delete();
