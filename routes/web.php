@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\CartController;
@@ -73,15 +74,19 @@ Route::middleware(['auth'])->group(function () {
     // ============================================
     Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
         
-        // Dashboard
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+        // ============================================
+        // DASHBOARD - MENGGUNAKAN DASHBOARDCONTROLLER
+        // ============================================
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         
+        // ============================================
         // ROUTE KATEGORI (CRUD)
+        // ============================================
         Route::resource('categories', AdminCategoryController::class);
         
+        // ============================================
         // ROUTE PRODUK (CRUD)
+        // ============================================
         Route::resource('products', AdminProductController::class);
         
         // ============================================

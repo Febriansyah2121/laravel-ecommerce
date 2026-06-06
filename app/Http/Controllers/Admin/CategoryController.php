@@ -8,23 +8,33 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CategoryController extends Controller
 {
+    /**
+     * Display a listing of categories.
+     */
     public function index(): View
     {
+        /** @var LengthAwarePaginator $categories */
         $categories = Category::withCount('products')->orderBy('id', 'desc')->paginate(10);
         return view('admin.categories.index', compact('categories'));
     }
 
+    /**
+     * Show the form for creating a new category.
+     */
     public function create(): View
     {
         return view('admin.categories.create');
     }
 
+    /**
+     * Store a newly created category in storage.
+     */
     public function store(Request $request): RedirectResponse
     {
-        // VALIDASI INPUT
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories',
             'slug' => 'required|string|max:255|unique:categories',
@@ -32,19 +42,24 @@ class CategoryController extends Controller
             'icon' => 'nullable|string|max:50'
         ]);
 
-        // SIMPAN KE DATABASE
         Category::create($validated);
 
         return redirect()->route('admin.categories.index')
             ->with('success', 'Kategori berhasil ditambahkan!');
     }
 
+    /**
+     * Show the form for editing the specified category.
+     */
     public function edit(int $id): View
     {
         $category = Category::findOrFail($id);
         return view('admin.categories.edit', compact('category'));
     }
 
+    /**
+     * Update the specified category in storage.
+     */
     public function update(Request $request, int $id): RedirectResponse
     {
         $category = Category::findOrFail($id);
@@ -62,6 +77,9 @@ class CategoryController extends Controller
             ->with('success', 'Kategori berhasil diupdate!');
     }
 
+    /**
+     * Remove the specified category from storage.
+     */
     public function destroy(int $id): RedirectResponse
     {
         $category = Category::findOrFail($id);

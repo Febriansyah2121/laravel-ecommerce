@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductView extends Model
 {
@@ -26,18 +27,26 @@ class ProductView extends Model
         return $this->belongsTo(Product::class);
     }
 
-    // Scope untuk filter berdasarkan tanggal
-    public function scopeToday($query)
+    /**
+     * Scope untuk filter hari ini
+     */
+    public function scopeToday(Builder $query): Builder
     {
         return $query->whereDate('created_at', today());
     }
 
-    public function scopeThisWeek($query)
+    /**
+     * Scope untuk filter minggu ini
+     */
+    public function scopeThisWeek(Builder $query): Builder
     {
         return $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
     }
 
-    public function scopeThisMonth($query)
+    /**
+     * Scope untuk filter bulan ini
+     */
+    public function scopeThisMonth(Builder $query): Builder
     {
         return $query->whereMonth('created_at', now()->month);
     }

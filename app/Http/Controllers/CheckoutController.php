@@ -7,13 +7,21 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Support\Collection;
 
 class CheckoutController extends Controller
 {
+    /**
+     * Display checkout page.
+     */
     public function index(): View|RedirectResponse
     {
+        /** @var array $cart */
         $cart = session()->get('cart', []);
+        
+        /** @var Collection $cartItems */
         $cartItems = [];
+        /** @var float $total */
         $total = 0;
         
         foreach ($cart as $id => $details) {
@@ -37,8 +45,12 @@ class CheckoutController extends Controller
         return view('checkout.index', compact('cartItems', 'total'));
     }
 
+    /**
+     * Process checkout and create order.
+     */
     public function process(Request $request): RedirectResponse
     {
+        /** @var array $cart */
         $cart = session()->get('cart', []);
         
         if (empty($cart)) {
@@ -53,8 +65,11 @@ class CheckoutController extends Controller
             'payment_method' => 'required|in:cod,transfer,card'
         ]);
         
+        /** @var float $total */
         $total = 0;
+        /** @var array $items */
         $items = [];
+        
         foreach ($cart as $id => $details) {
             $product = Product::find($id);
             if ($product) {
@@ -71,9 +86,10 @@ class CheckoutController extends Controller
             }
         }
         
-        // Status berdasarkan metode pembayaran
-        $status = ($validated['payment_method'] != 'cod') ? 'processing' : 'pending';
+        /** @var string $status */
+        $status = ($validated['payment_method'] !== 'cod') ? 'processing' : 'pending';
         
+        /** @var Order $order */
         $order = Order::create([
             'order_number' => Order::generateOrderNumber(),
             'customer_name' => $validated['customer_name'],
@@ -91,6 +107,9 @@ class CheckoutController extends Controller
         return redirect()->route('checkout.success', $order)->with('success', 'Order placed successfully!');
     }
 
+    /**
+     * Display order success page.
+     */
     public function success(Order $order): View
     {
         return view('checkout.success', compact('order'));

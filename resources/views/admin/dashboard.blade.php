@@ -10,7 +10,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm opacity-80">Total Products</p>
-                <p class="text-3xl font-bold">{{ \App\Models\Product::count() }}</p>
+                <p class="text-3xl font-bold">{{ $totalProducts }}</p>
             </div>
             <i class="fas fa-box text-4xl opacity-50"></i>
         </div>
@@ -21,20 +21,20 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm opacity-80">Total Categories</p>
-                <p class="text-3xl font-bold">{{ \App\Models\Category::count() }}</p>
+                <p class="text-3xl font-bold">{{ $totalCategories }}</p>
             </div>
             <i class="fas fa-folder text-4xl opacity-50"></i>
         </div>
     </div>
     
-    <!-- Total Product Views (Jumlah Klik Produk) -->
+    <!-- Total Clicks (dari kolom clicks) -->
     <div class="bg-gradient-to-r from-pink-500 to-pink-600 rounded-2xl p-6 text-white">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm opacity-80">Total Product Views</p>
-                <p class="text-3xl font-bold">{{ \App\Models\ProductView::count() }}</p>
+                <p class="text-sm opacity-80">Total Product Clicks</p>
+                <p class="text-3xl font-bold">{{ $totalClicks }}</p>
             </div>
-            <i class="fas fa-eye text-4xl opacity-50"></i>
+            <i class="fas fa-mouse-pointer text-4xl opacity-50"></i>
         </div>
     </div>
     
@@ -43,7 +43,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm opacity-80">Total Orders</p>
-                <p class="text-3xl font-bold">{{ \App\Models\Order::count() }}</p>
+                <p class="text-3xl font-bold">{{ $totalOrders }}</p>
             </div>
             <i class="fas fa-shopping-cart text-4xl opacity-50"></i>
         </div>
@@ -54,7 +54,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm opacity-80">Revenue</p>
-                <p class="text-3xl font-bold">Rp {{ number_format(\App\Models\Order::sum('total_amount'), 0, ',', '.') }}</p>
+                <p class="text-3xl font-bold">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
             </div>
             <i class="fas fa-dollar-sign text-4xl opacity-50"></i>
         </div>
@@ -79,7 +79,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse(\App\Models\Order::latest()->limit(5)->get() as $order)
+                    @forelse($recentOrders as $order)
                     <tr class="border-b">
                         <td class="py-3">{{ $order->order_number }}</td>
                         <td class="py-3">{{ $order->customer_name ?? 'N/A' }}</td>
@@ -88,7 +88,6 @@
                             <span class="px-2 py-1 rounded-full text-xs 
                                 @if($order->status == 'pending') bg-yellow-100 text-yellow-800
                                 @elseif($order->status == 'processing') bg-blue-100 text-blue-800
-                                @elseif($order->status == 'shipped') bg-purple-100 text-purple-800
                                 @elseif($order->status == 'delivered') bg-green-100 text-green-800
                                 @else bg-red-100 text-red-800 @endif">
                                 {{ ucfirst($order->status) }}
@@ -103,16 +102,13 @@
         </div>
     </div>
     
-    <!-- Top 5 Most Viewed Products -->
+    <!-- Top Products by Clicks -->
     <div class="bg-white rounded-2xl shadow-soft p-6">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold">Top 5 Most Viewed Products</h3>
+            <h3 class="text-lg font-semibold">Most Clicked Products</h3>
             <span class="text-xs text-slate-400">by click count</span>
         </div>
         <div class="space-y-3">
-            @php
-                $topProducts = \App\Models\Product::withCount('views')->orderBy('views_count', 'desc')->limit(5)->get();
-            @endphp
             @forelse($topProducts as $product)
             <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
                 <div class="flex items-center gap-3">
@@ -121,47 +117,79 @@
                     </div>
                     <div>
                         <p class="font-medium">{{ Str::limit($product->name, 30) }}</p>
-                        <div class="flex items-center gap-2 mt-1">
-                            <p class="text-xs text-slate-500">{{ $product->views_count }} views</p>
-                            @if($product->views_count > 0)
-                                <span class="text-xs text-green-500">
-                                    <i class="fas fa-chart-line"></i> Popular
-                                </span>
-                            @endif
-                        </div>
+                        <p class="text-xs text-slate-500">{{ $product->clicks }} clicks</p>
                     </div>
                 </div>
                 <div class="text-right">
                     <p class="text-sm text-orange-500 font-semibold">{{ $product->formatted_price }}</p>
-                    <p class="text-xs text-slate-400">Stock: {{ $product->stock }}</p>
                 </div>
             </div>
             @empty
             <div class="text-center py-8 text-slate-500">
                 <i class="fas fa-chart-line text-4xl mb-2 opacity-50"></i>
-                <p>No views data yet</p>
-                <p class="text-xs mt-1">Views will appear when customers click on products</p>
+                <p>No click data yet</p>
             </div>
             @endforelse
         </div>
     </div>
 </div>
 
-<!-- Views Statistics Chart (Optional) -->
+<!-- Views Statistics -->
 <div class="mt-6 bg-white rounded-2xl shadow-soft p-6">
     <h3 class="text-lg font-semibold mb-4">Views Statistics</h3>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="text-center p-4 bg-slate-50 rounded-xl">
             <p class="text-sm text-slate-500">Today</p>
-            <p class="text-2xl font-bold text-brand-orange">{{ \App\Models\ProductView::today()->count() }}</p>
+            <p class="text-2xl font-bold text-brand-orange">{{ $todayViews }}</p>
         </div>
         <div class="text-center p-4 bg-slate-50 rounded-xl">
             <p class="text-sm text-slate-500">This Week</p>
-            <p class="text-2xl font-bold text-brand-orange">{{ \App\Models\ProductView::thisWeek()->count() }}</p>
+            <p class="text-2xl font-bold text-brand-orange">{{ $thisWeekViews }}</p>
         </div>
         <div class="text-center p-4 bg-slate-50 rounded-xl">
             <p class="text-sm text-slate-500">This Month</p>
-            <p class="text-2xl font-bold text-brand-orange">{{ \App\Models\ProductView::thisMonth()->count() }}</p>
+            <p class="text-2xl font-bold text-brand-orange">{{ $thisMonthViews }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Additional Stats -->
+<div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white rounded-2xl shadow-soft p-6">
+        <h3 class="text-lg font-semibold mb-4">System Overview</h3>
+        <div class="space-y-3">
+            <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                <span class="text-slate-600">Total Users</span>
+                <span class="font-semibold">{{ $totalUsers }}</span>
+            </div>
+            <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                <span class="text-slate-600">Total Views (ProductView)</span>
+                <span class="font-semibold">{{ $totalViews }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl shadow-soft p-6">
+        <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
+        <div class="space-y-3">
+            <a href="{{ route('admin.products.create') }}" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                <div class="w-10 h-10 rounded-lg bg-brand-orange/10 text-brand-orange grid place-items-center">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div>
+                    <p class="font-medium">Add New Product</p>
+                    <p class="text-xs text-slate-500">Create a new product listing</p>
+                </div>
+            </a>
+            <a href="{{ route('admin.categories.create') }}" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                <div class="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-500 grid place-items-center">
+                    <i class="fas fa-folder"></i>
+                </div>
+                <div>
+                    <p class="font-medium">Add New Category</p>
+                    <p class="text-xs text-slate-500">Create a new product category</p>
+                </div>
+            </a>
         </div>
     </div>
 </div>
